@@ -1,8 +1,8 @@
 /*-------------------------------- Constants --------------------------------*/
-const players = {
+const PLAYERS = {
     '1': 'x', 
     '-1': 'o', 
-    'null': ' ', 
+    '': ' ', 
 }; 
 
 const WINNING_COMBOS = [ // "x" or "o" will be in those boxes for TTT
@@ -33,11 +33,7 @@ let tie;  /* tracks tie */
 /*----------------------------- Event Listeners -----------------------------*/
 
 squareEls.forEach((square) => {
-    square.addEventListener('click', (event) => {
-        if (squareIdx === 'x' || squareIdx == 'o' || winner === true) {
-            return; 
-    }; 
-}); 
+    square.addEventListener('click', handleClick); 
 }); 
 
 resetBtnEl.addEventListener('click', init); 
@@ -45,11 +41,11 @@ resetBtnEl.addEventListener('click', init);
 /*----------------------------- functions -----------------------------*/
 // 1. define required variable used to track state of the game (: 
 // 2. store cached elements (: 
-// 3. initialize game (: --> intialize function
-// 4. render state of the game to user (: --> the message 
-// 5. define required constants --> Q: do I need players? we used them in connect 4.
-// 6. handle player clicking --> function handleClick 
-// 7. create reset functionality 
+// 3. initialize game (: --> intialize function (:
+// 4. render state of the game to user (: --> the message  (:
+// 5. define required constants (: 
+// 6. handle player clicking (:
+// 7. create reset functionality (: 
 
 init(); 
 
@@ -62,12 +58,14 @@ function init() {
     render(); 
 }; 
 
-function handleClick(evt) {
-    placePiece(squareIdx); 
+function handleClick(event) {
+    placePiece(event.target.id); 
     checkWinner(); 
-    checkTie(); 
+    checkTie(event.target.id);  
     switchPlayerTurn(); 
-    render(); 
+    render();
+    
+    
 }; 
 
 function placePiece(squareIdx) {
@@ -75,19 +73,28 @@ function placePiece(squareIdx) {
 }
 
 function checkWinner() {
+    for (let winArr of WINNING_COMBOS) {
+        if(Math.abs(board[winArr[0]] + board[winArr[1]] + board[winArr[2]]) === 3) {
+            return turn *= -1;  // will switch "o" after 3 "x" in a row
+        }
+    }
+}
+
+/*
+function checkWinner() {
     WINNING_COMBOS.forEach((combo) => {
         combo.forEach((square) => {
-            if (square[0] != ' ' && square[1] === square[2] && square[0] === square[2]) {
+            if (square[0] !== '' && square[0] === square[1] && square[0] === square[2]) {
                 winner = true; 
             }; 
         }); 
     }); 
-}
+}*/
 
-function checkTie() {
+function checkTie(squareIdx) {
     if (winner === true) {
         return; 
-    } else if (board[squareIdx] != '') {
+    } else if (board[squareIdx] !== '') {
         tie = false; 
     } else {
         tie = true; 
@@ -95,7 +102,7 @@ function checkTie() {
 }
 
 function switchPlayerTurn() {
-    if (winner === true) {
+    if (winner !== true) {
         return; 
     } else {
         turn *= -1; 
@@ -108,17 +115,19 @@ function render() {
 }; 
 
 function updateMessage() {
+    console.log(winner, tie); 
     if (winner === false && tie === false) {
-        messageEl.innerHTML = `${turn}'s turn`
+        messageEl.innerHTML = `${PLAYERS[turn]}'s turn`
     } else if (winner === false && tie === true) {
         messageEl.innerHTML = "tie."; 
     } else {
-        messageEl.innerHTML =`${turn} wins.`
+        messageEl.innerHTML =`${PLAYERS[turn]} wins.`
     }
 }
 
 function updateBoard() {
     board.forEach((square, idx) => {
-        squareEls[idx].innerText = square; // squareEls is an array in cached elements 
+        squareEls[idx].innerText = PLAYERS[square]; // squareEls is an array in cached elements 
     }); 
 }
+
