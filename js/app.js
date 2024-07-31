@@ -75,26 +75,16 @@ function placePiece(squareIdx) {
 function checkWinner() {
     for (let winArr of WINNING_COMBOS) {
         if(Math.abs(board[winArr[0]] + board[winArr[1]] + board[winArr[2]]) === 3) {
-            return turn *= -1;  // will switch "o" after 3 "x" in a row
+            winner = true; 
         }
     }
 }
 
-/*
-function checkWinner() {
-    WINNING_COMBOS.forEach((combo) => {
-        combo.forEach((square) => {
-            if (square[0] !== '' && square[0] === square[1] && square[0] === square[2]) {
-                winner = true; 
-            }; 
-        }); 
-    }); 
-}*/
 
 function checkTie(squareIdx) {
     if (winner === true) {
         return; 
-    } else if (board[squareIdx] !== '') {
+    } else if (board.includes('')) {
         tie = false; 
     } else {
         tie = true; 
@@ -102,7 +92,7 @@ function checkTie(squareIdx) {
 }
 
 function switchPlayerTurn() {
-    if (winner !== true) {
+    if (winner === true) {
         return; 
     } else {
         turn *= -1; 
